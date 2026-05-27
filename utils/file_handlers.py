@@ -25,7 +25,7 @@ def unzip_recursive(zip_path: Path, extract_to: Path):
         with zipfile.ZipFile(zip_path, 'r') as zf:
             zf.extractall(tmpdir)
 
-        # Walk through extracted files
+        # Walk through extracted files AND folders
         for root, dirs, files in os.walk(tmpdir):
             root_path = Path(root)
             for file in files:
@@ -47,28 +47,81 @@ def unzip_recursive(zip_path: Path, extract_to: Path):
                     shutil.copy2(file_path, dest)
 
 
+# ---------- FOLDER FLATTENING (NEW!) ----------
+def flatten_directory(source_dir: Path, dest_dir: Path):
+    """
+    Recursively copy all files from source_dir (including subfolders)
+    directly into dest_dir. No subfolders in the output.
+    
+    Example:
+        source_dir/
+        ├── Assignment1/
+        │   ├── answer.pdf
+        │   └── code.py
+        └── notes.docx
+        
+        becomes:
+        dest_dir/
+        ├── answer.pdf
+        ├── code.py
+        └── notes.docx
+    """
+    # Walk through ALL subdirectories
+    for root, dirs, files in os.walk(source_dir):
+        root_path = Path(root)
+        for file in files:
+            file_path = root_path / file
+            
+            # Handle zip files
+            if file_path.suffix.lower() == '.zip':
+                unzip_recursive(file_path, dest_dir)
+            else:
+                # Handle name collisions (files from different subfolders
+                # might have the same name)
+                dest = dest_dir / file_path.name
+                if dest.exists():
+                    stem = dest.stem
+                    suffix = dest.suffix
+                    counter = 1
+                    while dest.exists():
+                        dest = dest_dir / f"{stem}_{counter}{suffix}"
+                        counter += 1
+                shutil.copy2(file_path, dest)
+
+
 # ---------- TEXT EXTRACTION ----------
 def extract_text_from_pdf(pdf_path: Path) -> str:
     """Extract all text from a PDF using pdfplumber."""
     text = ""
-    with pdfplumber.open(pdf_path) as pdf:
-        for page in pdf.pages:
-            page_text = page.extract_text()
-            if page_text:
-                text += page_text + "\n"
+    try:
+        with pdfplumber.open(pdf_path) as pdf:
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + "\n"
+    except Exception as e:
+        print(f"  Warning: Could not read PDF {pdf_path.name}: {e}")
     return text
 
 
 def extract_text_from_docx(docx_path: Path) -> str:
     """Extract all text from a DOCX file."""
-    doc = Document(docx_path)
-    return "\n".join([para.text for para in doc.paragraphs])
+    try:
+        doc = Document(docx_path)
+        return "\n".join([para.text for para in doc.paragraphs])
+    except Exception as e:
+        print(f"  Warning: Could not read DOCX {docx_path.name}: {e}")
+        return ""
 
 
 def extract_text_from_txt(txt_path: Path) -> str:
     """Read plain text file."""
-    with open(txt_path, "r", encoding="utf-8", errors="ignore") as f:
-        return f.read()
+    try:
+        with open(txt_path, "r", encoding="utf-8", errors="ignore") as f:
+            return f.read()
+    except Exception as e:
+        print(f"  Warning: Could not read file {txt_path.name}: {e}")
+        return ""
 
 
 def get_file_text(file_path: Path, max_chars: int = None) -> str:
@@ -82,10 +135,11 @@ def get_file_text(file_path: Path, max_chars: int = None) -> str:
         text = extract_text_from_pdf(file_path)
     elif suffix == '.docx':
         text = extract_text_from_docx(file_path)
-    elif suffix in ['.txt', '.py', '.java', '.c', '.cpp', '.js', '.html', '.css', '.ipynb']:
+    elif suffix in ['.txt', '.py', '.java', '.c', '.cpp', '.js', '.html', '.css', '.ipynb', 
+                    '.md', '.json', '.xml', '.yaml', '.yml', '.sql', '.r', '.rb']:
         text = extract_text_from_txt(file_path)
     else:
-        # Try plain text as fallback
+        # Try plain text as fallback for unknown types
         try:
             text = extract_text_from_txt(file_path)
         except Exception:
