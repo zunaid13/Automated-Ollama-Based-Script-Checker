@@ -13,8 +13,8 @@ Activate it:
 Windows: venv\Scripts\activate
 Mac/Linux: source venv/bin/activate
 
-Install required libraries:
-pip install pdfplumber python-docx openpyxl ollama tqdm
+Install required libraries using pip (see requirements.txt):
+pip install -r requirements.txt
 
 Pull the AI model in Ollama: (Note, depending on which model you are using you might need to change the config.json model name)
 ollama pull qwen2.5:32b
@@ -35,10 +35,26 @@ How to Run & Customise
 Check your config.json – make sure the folder names match exactly what you created.
 Place your input files as described in the folder structure.
 
-Run the script:
-python main.py
+---- RUN SCRIPTS -----
+
+# Step 1: Clean submissions (unzip everything)
+python scripts/01_clean_submissions.py
+
+# Step 2: AI identifies questions and renames files
+python scripts/02_rename_by_questions.py
+
+# Step 3: AI grades all answers (saves JSON)
+python scripts/03_grade_answers.py
+
+# Step 4: Generate Excel report
+python scripts/04_generate_report.py
 
 Wait – The AI steps (question identification & grading) will take some time depending on the number of students and files. The progress bars will show you where you are.
+
+
+
+
+
 
 Customisation Tips (For “Noob Coders”)
 Change the AI model: Edit config.json → "ollama" → "model" to any other model you have pulled (e.g., "mistral").

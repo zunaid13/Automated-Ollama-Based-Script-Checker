@@ -5,6 +5,7 @@
     "marking_criteria_dir": "input/marking_criteria",
     "submissions_dir": "input/submissions",
     "cleaned_dir": "cleaned_submissions",
+    "renamed_dir": "renamed_submissions",
     "output_excel": "grading_output/grades.xlsx"
   },
   "ollama": {

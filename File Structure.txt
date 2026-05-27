@@ -1,27 +1,26 @@
-your_project/
+VibeCoded Script Checker/
 │
-├── config.json                 # Settings and paths (you edit this)
-├── main.py                     # The whole pipeline
-├── requirements.txt            # Python packages to install
+├── config.json                    # (same as before, shared by all scripts)
+├── requirements.txt               # Python dependencies
 │
-├── input/                      # Your raw data (you provide this)
-│   ├── questions/              # One or more PDF question papers
-│   ├── solutions/              # Solution files (PDF, txt, docx, etc.)
-│   ├── marking_criteria/       # Marking criteria (PDF, txt, etc.)
-│   └── submissions/            # Raw student folders
-│       ├── student_123/        # Folder name = student ID
-│       │   ├── answer1.zip
-│       │   └── notes.docx
-│       ├── student_456/
-│       │   └── stuff.zip       # May contain another zip inside
-│       └── ...
+├── scripts/                       # All pipeline scripts
+│   ├── 01_clean_submissions.py    # Step 1: Unzip & flatten
+│   ├── 02_rename_by_questions.py  # Step 2: AI question identification & renaming
+│   ├── 03_grade_answers.py        # Step 3: AI grading
+│   └── 04_generate_report.py      # Step 4: Create Excel report
 │
-├── cleaned_submissions/        # Auto‑generated (clean structure)
-│   ├── student_123/
-│   │   ├── Q1.pdf
-│   │   ├── Q2.docx
-│   │   └── Q3.txt
-│   └── ...
+├── utils/                         # Shared helper functions
+│   ├── __init__.py                # Makes utils a Python package
+│   ├── config_loader.py           # Load config.json
+│   ├── file_handlers.py           # Unzip, text extraction
+│   └── ollama_helpers.py          # AI prompt functions
 │
-└── grading_output/             # Auto‑generated Excel report
-    └── grades.xlsx
+├── input/                         # Your input files (same structure)
+│   ├── questions/
+│   ├── solutions/
+│   ├── marking_criteria/
+│   └── submissions/
+│
+├── cleaned_submissions/           # Output from Step 1, input for Step 2
+├── renamed_submissions/           # Output from Step 2, input for Step 3
+└── grading_output/                # Output from Step 4
