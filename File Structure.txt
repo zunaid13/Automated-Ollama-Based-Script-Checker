@@ -1,0 +1,27 @@
+your_project/
+│
+├── config.json                 # Settings and paths (you edit this)
+├── main.py                     # The whole pipeline
+├── requirements.txt            # Python packages to install
+│
+├── input/                      # Your raw data (you provide this)
+│   ├── questions/              # One or more PDF question papers
+│   ├── solutions/              # Solution files (PDF, txt, docx, etc.)
+│   ├── marking_criteria/       # Marking criteria (PDF, txt, etc.)
+│   └── submissions/            # Raw student folders
+│       ├── student_123/        # Folder name = student ID
+│       │   ├── answer1.zip
+│       │   └── notes.docx
+│       ├── student_456/
+│       │   └── stuff.zip       # May contain another zip inside
+│       └── ...
+│
+├── cleaned_submissions/        # Auto‑generated (clean structure)
+│   ├── student_123/
+│   │   ├── Q1.pdf
+│   │   ├── Q2.docx
+│   │   └── Q3.txt
+│   └── ...
+│
+└── grading_output/             # Auto‑generated Excel report
+    └── grades.xlsx

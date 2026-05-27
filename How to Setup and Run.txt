@@ -1,0 +1,56 @@
+-------- Setup Instructions (Do Once)
+
+Install Python (if not already) from python.org.
+During installation, check “Add Python to PATH”.
+Install requirements using pip command from the requirements.txt
+
+Open a terminal (Command Prompt on Windows, Terminal on Mac/Linux) inside your_project/ folder.
+
+Create a virtual environment (keeps packages isolated):
+python -m venv venv
+
+Activate it:
+Windows: venv\Scripts\activate
+Mac/Linux: source venv/bin/activate
+
+Install required libraries:
+pip install pdfplumber python-docx openpyxl ollama tqdm
+
+Pull the AI model in Ollama: (Note, depending on which model you are using you might need to change the config.json model name)
+ollama pull qwen2.5:32b
+
+
+In the config.json:
+max_chars_for_question_id: When renaming files, the AI will only read the first 2000 characters to guess the question number (saves time).
+max_marks_per_question: Default max marks if not specified elsewhere.
+check the model name.
+
+Check if ollama is working properly by running:
+python -c "import ollama; print(ollama.chat(model='qwen2.5:32b', messages=[{'role':'user','content':'Reply with just the word: working'}]))"
+Note: If it does not run properly you might need to start the server by running:
+ollama serve
+
+
+How to Run & Customise
+Check your config.json – make sure the folder names match exactly what you created.
+Place your input files as described in the folder structure.
+
+Run the script:
+python main.py
+
+Wait – The AI steps (question identification & grading) will take some time depending on the number of students and files. The progress bars will show you where you are.
+
+Customisation Tips (For “Noob Coders”)
+Change the AI model: Edit config.json → "ollama" → "model" to any other model you have pulled (e.g., "mistral").
+
+Max marks per question: Change "max_marks_per_question" in config.json.
+
+How much of the student file the AI reads for renaming: Modify "max_chars_for_question_id". Lower = faster but less accurate.
+
+If student files are images (PNG/JPG) – This script doesn’t handle them because Ollama can’t “see” images with text models. You’d need OCR (like Tesseract). But for now, assume text-based submissions.
+
+Splitting the question paper: The script tries to split questions by lines like 1., 2). If your paper uses a different format, you can edit the regex inside parse_question_papers(). For example, if your questions start with “Question 1”, change the pattern to r'(?:^|\n)\s*Question\s+(\d+)'.
+
+File type handling: The get_file_text() function currently supports .pdf, .docx, .txt, and common code files. Add more extensions if needed by copying the .txt handling line.
+
+Error handling: If the AI fails to return valid JSON, the script logs a deduction comment. You can check the console output.

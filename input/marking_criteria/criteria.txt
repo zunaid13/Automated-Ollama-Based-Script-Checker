@@ -1,0 +1,4 @@
+Logic : 20%
+Completion rate: 50%
+Code syntax : 20%
+Concept of the function: 10%

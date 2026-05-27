@@ -1,0 +1,16 @@
+{
+  "paths": {
+    "questions_dir": "input/questions",
+    "solutions_dir": "input/solutions",
+    "marking_criteria_dir": "input/marking_criteria",
+    "submissions_dir": "input/submissions",
+    "cleaned_dir": "cleaned_submissions",
+    "output_excel": "grading_output/grades.xlsx"
+  },
+  "ollama": {
+    "model": "qwen2.5:32b",
+    "timeout": 120
+  },
+  "max_chars_for_question_id": 2000,
+  "max_marks_per_question": 10
+}
